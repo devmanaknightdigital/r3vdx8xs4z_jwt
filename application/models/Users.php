@@ -52,13 +52,11 @@ class Users extends CI_Model
 	 */
 	public function authenticate($email, $password)
 	{
-
 		$this->db->select('password');
 		$this->db->from('users');
 		$this->db->where('email', $email, TRUE);
 
 		$hash = $this->db->get()->row('password');
-        error_log($hash);
 		return $this->verify_password_hash($password, $hash);
 	}
 
@@ -73,9 +71,16 @@ class Users extends CI_Model
 	{
 		$this->db->from('users');
 		$this->db->where('id', $id, TRUE);
-        $result =  $this->db->get()->row();
-        unset($result->password);
-		return $result;
+
+		$result =  $this->db->get()->row();
+
+		if ($result)
+		{
+			unset($result->password);
+			return $result;
+		}
+
+		return NULL;
 	}
 
 	/**
@@ -89,7 +94,13 @@ class Users extends CI_Model
 	{
 		$this->db->from('users');
 		$this->db->where('email', $email, TRUE);
-		return $this->db->get()->row('id');
+		$result = $this->db->get();
+		if ($result)
+		{
+			return $result->row('id');
+		}
+
+		return 0;
 	}
 
 	/**
@@ -103,7 +114,14 @@ class Users extends CI_Model
 	{
 		$this->db->from('users');
 		$this->db->where('email', $email, TRUE);
-		return $this->db->get()->row();
+		$result = $this->db->get();
+
+		if ($result)
+		{
+			return $result->row();
+		}
+
+		return NULL;
 	}
 
 	/**
@@ -115,11 +133,16 @@ class Users extends CI_Model
 	 */
 	public function get_user($user_id)
 	{
-
 		$this->db->from('users');
 		$this->db->where('id', $user_id, TRUE);
-		return $this->db->get()->row();
+		$result = $this->db->get();
 
+		if ($result)
+		{
+			return $result->row();
+		}
+
+		return NULL;
 	}
 
 	/**
